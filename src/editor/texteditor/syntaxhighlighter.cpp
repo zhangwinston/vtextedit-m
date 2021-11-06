@@ -38,11 +38,11 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *p_doc,
     KSyntaxHighlighting::Theme th;
     if (!p_theme.isEmpty()) {
         // Check if it is a file path.
-        if (p_theme.contains(QRegularExpression(QStringLiteral("[\\\\/]")))) {
-            th = repository()->themeFromFile(p_theme);
-        } else {
+//        if (p_theme.contains(QRegularExpression(QStringLiteral("[\\\\/]")))) {
+//            th = repository()->themeFromFile(p_theme);
+//        } else {
             th = repository()->theme(p_theme);
-        }
+//        }
     }
     if (!th.isValid()) {
         th = repository()->defaultTheme();

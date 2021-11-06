@@ -155,6 +155,11 @@ void VMarkdownEditor::updateFromConfig()
 
     documentLayout()->setConstrainPreviewWidthEnabled(m_config->m_constrainInplacePreviewWidthEnabled);
 
+    //zhangyw add
+    documentLayout()->setLeadingSpaceOfLineFactor(m_config->m_leading_space_line_factor);
+    documentLayout()->setLeadingSpaceOfCodeBlockFactor(m_config->m_leading_space_line_code_block_factor);
+    //zhangyw add
+
     updateInplacePreviewSources();
 }
 
