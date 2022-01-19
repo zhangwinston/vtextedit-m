@@ -40,9 +40,9 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *p_doc,
     KSyntaxHighlighting::Theme th;
     if (!p_theme.isEmpty()) {
         // Check if it is a file path.
-        if (Utils::isFilePath(p_theme)) {
-            th = repository()->themeFromFile(p_theme);
-        } else {
+//        if (Utils::isFilePath(p_theme)) {
+//            th = repository()->themeFromFile(p_theme);
+//        } else {
             th = repository()->theme(p_theme);
     }
     if (!th.isValid()) {

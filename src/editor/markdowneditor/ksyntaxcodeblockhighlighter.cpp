@@ -42,8 +42,8 @@ KSyntaxCodeBlockHighlighter::KSyntaxCodeBlockHighlighter(const QString &p_theme,
     KSyntaxHighlighting::Theme th;
     if (!p_theme.isEmpty()) {
         if (Utils::isFilePath(p_theme)) {
-            th = KSyntaxHighlighterWrapper::repository()->themeFromFile(p_theme);
-        } else {
+//            th = KSyntaxHighlighterWrapper::repository()->themeFromFile(p_theme);
+//        } else {
             th = KSyntaxHighlighterWrapper::repository()->theme(p_theme);
         }
     }
