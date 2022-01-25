@@ -756,6 +756,12 @@ QVariant VTextEdit::inputMethodQuery(Qt::InputMethodQuery p_query) const
     return QTextEdit::inputMethodQuery(p_query);
 }
 
+bool VTextEdit::getInputMethodDisableAfterLeaderKey() const
+{
+    return m_inputMethodDisabledAfterLeaderKey;
+}
+
+
 void VTextEdit::setInputMethodEnabled(bool p_enabled)
 {
     if (m_inputMethodEnabled != p_enabled) {

@@ -162,6 +162,7 @@ namespace vte
         void setTabStopWidthInSpaces(int p_spaces);
 
         int getTabStopWidthInSpaces() const;
+        bool getInputMethodDisableAfterLeaderKey() const;
 
         void setSpaceWidth(qreal p_width);
 
