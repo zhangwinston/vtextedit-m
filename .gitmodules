@@ -4,3 +4,6 @@
 [submodule "src/libs/sonnet"]
 	path = src/libs/sonnet
 	url = https://github.com/vnotex/sonnet.git
+[submodule "src/libs/syntax-highlighting"]
+	path = src/libs/syntax-highlighting
+	url = https://github.com/zhangwinston/syntax-highlighting
