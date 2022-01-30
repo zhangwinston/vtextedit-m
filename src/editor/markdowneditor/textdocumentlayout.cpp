@@ -496,7 +496,7 @@ void TextDocumentLayout::layoutBlock(const QTextBlock &p_block)
     QTextLayout *tl = p_block.layout();
     QTextOption option = doc->defaultTextOption();
 
-    //zhangyw add
+    //zhangyw add space for lines/codeblock
     if(p_block.length()>1 ){
         if(p_block.userState()==-1){
             setLeadingSpaceOfLine(QFontMetrics((p_block.charFormat()).font()).height()*m_leadingSpaceOfLineFactor);
@@ -506,7 +506,7 @@ void TextDocumentLayout::layoutBlock(const QTextBlock &p_block)
     } else {
         setLeadingSpaceOfLine(0);
     }
-    //zhangyw add
+    //zhangyw add space for lines/codeblock
 
     {
         auto direction = p_block.textDirection();

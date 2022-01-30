@@ -53,7 +53,7 @@ void NetworkAccess::requestAsync(const QUrl &p_url)
     m_netAccessMgr.get(NetworkUtils::networkRequest(p_url));
 }
 
-//zhangyw add
+//zhangyw add download image from special site
 void NetworkAccess::requestAsync(const QUrl &p_url,const RawHeaderPairs &p_rawHeader)
 {
     if (!p_url.isValid()) {
@@ -67,7 +67,7 @@ void NetworkAccess::requestAsync(const QUrl &p_url,const RawHeaderPairs &p_rawHe
 
     m_netAccessMgr.get(nq);
 }
-//zhangyw add
+//zhangyw add download image from special site
 
 NetworkReply NetworkAccess::request(const QUrl &p_url)
 {

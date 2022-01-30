@@ -162,7 +162,6 @@ namespace vte
         void setTabStopWidthInSpaces(int p_spaces);
 
         int getTabStopWidthInSpaces() const;
-        bool getInputMethodDisableAfterLeaderKey() const;
 
         void setSpaceWidth(qreal p_width);
 
@@ -173,6 +172,11 @@ namespace vte
         void setInputMethodEnabled(bool p_enabled);
 
         void setLeaderKeyToSkip(int p_key, Qt::KeyboardModifiers p_modifiers);
+
+        //add by zhangyw leaderkey skip, navigationMode skip extra keys
+        void setNavigationModeLeftKeysToSkip(int p_key, Qt::KeyboardModifiers p_modifiers);
+        void enableInputMethodAfterShortcutWithLeaderKey();
+        //add by zhangyw leaderkey skip, navigationMode skip extra keys
 
     signals:
         void cursorLineChanged();
@@ -327,11 +331,15 @@ namespace vte
         // which stops the triggering of the whole key sequence.
         // We will disable the input method after `Ctrl+G` is pressed to handle this case trickily.
         Key m_leaderKeyToSkip;
+        Key m_navigationModeLeftKeysToSkip;
 
         bool m_inputMethodDisabledAfterLeaderKey = false;
 
         // keyReleaseEvent count needed to release the leader key.
         int m_leaderKeyReleaseCount = 0;
+
+        int m_navigationKeyCount = 0;
+        bool m_navigationMode = false;
     };
 
     template <typename T>
