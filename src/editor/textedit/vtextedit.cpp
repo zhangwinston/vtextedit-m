@@ -263,43 +263,6 @@ void VTextEdit::keyPressEvent(QKeyEvent *p_event)
     }
 }
 
-void VTextEdit::keyReleaseEvent(QKeyEvent *p_event)
-{
-    qWarning()<<"keyReleaseEvent: m_inputMethodEnabled"<< m_inputMethodEnabled;
-    qWarning()<<"keyReleaseEvent: m_inputMethodDisabledAfterLeaderKey"<< m_inputMethodEnabled;
-    qWarning()<<"keyReleaseEvent: count"<< m_leaderKeyReleaseCount;
-    qWarning()<<"keyReleaseEvent: key:"<< p_event->key();
-    qWarning()<<"keyReleaseEvent: modifiers:"<< p_event->modifiers();
-
-    if (m_inputMethodDisabledAfterLeaderKey) {
-        //modfiy by zhangyw leaderkey skip, navigationMode skip extra keys
-        if (--m_leaderKeyReleaseCount < 0 ) {
-            //if not in navigationmode, last key is the left shortcut of entering navigation mode, such as "W"
-            //then enter navigationmode, wait two letters
-            if( m_navigationMode ==false &&
-                m_navigationModeLeftKeysToSkip.m_key == p_event->key() &&
-                m_navigationModeLeftKeysToSkip.m_modifiers == p_event->modifiers())
-            {
-                m_navigationKeyCount=2;
-                m_navigationMode=true;
-            }
-            else{
-                //if not in navigationmode, or in navigationmode but the letters is input already,then enable inputmethod
-                if(m_navigationKeyCount<=0)
-                {
-                    m_inputMethodDisabledAfterLeaderKey = false;
-                    setInputMethodEnabled(true);
-                }
-            }
-        }
-        //modfiy by zhangyw leaderkey skip, navigationMode skip extra keys
-
-    }
-        qWarning()<<"keyReleaseEvent: count"<< m_leaderKeyReleaseCount;
-
-    QTextEdit::keyReleaseEvent(p_event);
-}
-
 void VTextEdit::handleDefaultKeyPress(QKeyEvent *p_event)
 {
     const int key = p_event->key();
@@ -381,6 +344,49 @@ void VTextEdit::handleDefaultKeyPress(QKeyEvent *p_event)
 bool VTextEdit::eventFilter(QObject *p_obj, QEvent *p_event)
 {
     switch (p_event->type()) {
+
+    //add by zhangyw leaderkey skip, navigationMode skip extra keys
+    case QEvent::KeyRelease:
+    {
+        QKeyEvent *ke = static_cast<QKeyEvent *>(p_event);
+        if( m_leaderKeyReleaseCount >0) {
+            m_leaderKeyReleaseCount--;
+        }
+        if(m_leaderKeyReleaseCount<=0){
+            if( m_navigationMode ==false && m_navigationModeWithLeaderKey &&
+                    m_navigationModeKeysToSkip.m_key == ke->key() &&
+                    m_navigationModeKeysToSkip.m_modifiers == ke->modifiers()) {
+                m_navigationKeyCount=2;
+                m_navigationMode=true;
+
+                qWarning()<<"keyReleaseEvent: m_navigationMode"<< m_navigationMode;
+                qWarning()<<"keyReleaseEvent: m_navigationKeyCount"<< m_navigationKeyCount;
+                qWarning()<<"keyReleaseEvent: key:"<< ke->text();
+                qWarning()<<"Enable NavigationMode in Keyrelease";
+            }
+        }
+
+#if 0
+        if (m_inputMethodDisabledAfterLeaderKey) {
+            if (--m_leaderKeyReleaseCount <= 0 ) {
+                //if not in navigationmode, last key is the left shortcut of entering navigation mode, such as "W"
+                //then enter navigationmode, wait two letters
+                if( m_navigationMode ==false &&
+                        m_navigationModeLeftKeysToSkip.m_key == ke->key() &&
+                        m_navigationModeLeftKeysToSkip.m_modifiers == ke->modifiers()) {
+                    m_navigationKeyCount=2;
+                    m_navigationMode=true;
+
+                    qWarning()<<"keyReleaseEvent: m_navigationMode"<< m_navigationMode;
+                    qWarning()<<"keyReleaseEvent: m_navigationKeyCount"<< m_navigationKeyCount;
+                    qWarning()<<"keyReleaseEvent: key:"<< ke->text();
+                    qWarning()<<"Enable NavigationMode in Keyrelease";
+                }
+            }
+        }
+#endif
+        break;
+    }
     case QEvent::ShortcutOverride:
     {
         // This event is sent when a shortcut is about to trigger.
@@ -391,22 +397,30 @@ bool VTextEdit::eventFilter(QObject *p_obj, QEvent *p_event)
         if (m_inputMethodEnabled && ke->key() == m_leaderKeyToSkip.m_key && ke->modifiers() == m_leaderKeyToSkip.m_modifiers) {
             setInputMethodEnabled(false);
             m_inputMethodDisabledAfterLeaderKey = true;
-            m_leaderKeyReleaseCount = m_leaderKeyToSkip.GetKeyReleaseCount();
+            m_leaderKeyReleaseCount = m_leaderKeyToSkip.GetKeyReleaseCount()+1; // release count with function key, extra 1 letter
             break;
         }
-        //add by zhangyw subsequence key is a shortcut, count should renew,
-        else
-        {
-            if(m_inputMethodEnabled==false && m_inputMethodDisabledAfterLeaderKey==true )
-            {
-                if(ke->modifiers()==Qt::NoModifier && m_navigationKeyCount >0)
-                {
-                    m_navigationKeyCount--;
-                }
-            }
+
+        //add by zhangyw navigationmode shortcut without leaderkey
+        if (m_inputMethodEnabled && m_navigationModeWithLeaderKey==false && ke->key() == m_navigationModeKeysToSkip.m_key && ke->modifiers() ==m_navigationModeKeysToSkip.m_modifiers) {
+            setInputMethodEnabled(false);
+            m_navigationMode = true;
+            m_navigationKeyCount = 2; // key count without function key, extra 2 letters
+
+            qWarning()<<"ShortcutOverride: m_navigationMode"<< m_navigationMode;
+            qWarning()<<"ShortcutOverride: m_navigationKeyCount"<< m_navigationKeyCount;
+            qWarning()<<"ShortcutOverride: key:"<< ke->text();
+            qWarning()<<"Enable NavigationMode in ShortcutOverride";
+
             break;
         }
-        //add by zhangyw subsequence key is a shortcut, count should renew
+
+        //add by zhangyw navigationmode keys can't deal with keyrelease, change here
+        if(ke->modifiers()==Qt::NoModifier && m_navigationKeyCount >0) {
+            m_navigationKeyCount--;
+            break;
+        }
+        //add by zhangyw navigationmode keys can't deal with keyrelease, change here
 
         if (m_inputMode && m_inputMode->stealShortcut(ke)) {
             ke->accept();
@@ -419,6 +433,16 @@ bool VTextEdit::eventFilter(QObject *p_obj, QEvent *p_event)
     default:
         break;
     }
+
+    // add by zhangyw count is zero, change disable mode to enable
+    if (m_leaderKeyReleaseCount <= 0 && m_navigationKeyCount <= 0  ) {
+        if(m_inputMethodDisabledAfterLeaderKey || m_navigationMode ){
+            m_inputMethodDisabledAfterLeaderKey = false;
+            m_navigationMode = false;
+            setInputMethodEnabled(true);
+        }
+    }
+    // add by zhangyw count is zero, change disable mode to enable
 
     return QTextEdit::eventFilter(p_obj, p_event);
 }
@@ -1004,8 +1028,9 @@ void VTextEdit::setLeaderKeyToSkip(int p_key, Qt::KeyboardModifiers p_modifiers)
     m_leaderKeyToSkip.m_modifiers = p_modifiers;
 }
 
-void VTextEdit::setNavigationModeLeftKeysToSkip(int p_key, Qt::KeyboardModifiers p_modifiers)
+void VTextEdit::setNavigationModeKeysToSkip(int p_key, Qt::KeyboardModifiers p_modifiers, bool withLeaderKey)
 {
-    m_navigationModeLeftKeysToSkip.m_key = p_key;
-    m_navigationModeLeftKeysToSkip.m_modifiers = p_modifiers;
+    m_navigationModeKeysToSkip.m_key = p_key;
+    m_navigationModeKeysToSkip.m_modifiers = p_modifiers;
+    m_navigationModeWithLeaderKey = withLeaderKey;
 }

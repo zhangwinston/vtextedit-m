@@ -170,7 +170,7 @@ namespace vte
         void setLeaderKeyToSkip(int p_key, Qt::KeyboardModifiers p_modifiers);
 
         //add by zhangyw leaderkey skip, navigationMode skip extra keys
-        void setNavigationModeKeyToSkip(int p_key, Qt::KeyboardModifiers p_modifiers);
+        void setNavigationModeKeyToSkip(int p_key, Qt::KeyboardModifiers p_modifiers, bool withLeaderkey);
         //add by zhangyw leaderkey skip, navigationMode skip extra keys
 
         // Custom search paths for KSyntaxHighlighting Definition files.
