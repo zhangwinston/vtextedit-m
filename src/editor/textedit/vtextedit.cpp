@@ -358,33 +358,8 @@ bool VTextEdit::eventFilter(QObject *p_obj, QEvent *p_event)
                     m_navigationModeKeysToSkip.m_modifiers == ke->modifiers()) {
                 m_navigationKeyCount=2;
                 m_navigationMode=true;
-
-                qWarning()<<"keyReleaseEvent: m_navigationMode"<< m_navigationMode;
-                qWarning()<<"keyReleaseEvent: m_navigationKeyCount"<< m_navigationKeyCount;
-                qWarning()<<"keyReleaseEvent: key:"<< ke->text();
-                qWarning()<<"Enable NavigationMode in Keyrelease";
             }
         }
-
-#if 0
-        if (m_inputMethodDisabledAfterLeaderKey) {
-            if (--m_leaderKeyReleaseCount <= 0 ) {
-                //if not in navigationmode, last key is the left shortcut of entering navigation mode, such as "W"
-                //then enter navigationmode, wait two letters
-                if( m_navigationMode ==false &&
-                        m_navigationModeLeftKeysToSkip.m_key == ke->key() &&
-                        m_navigationModeLeftKeysToSkip.m_modifiers == ke->modifiers()) {
-                    m_navigationKeyCount=2;
-                    m_navigationMode=true;
-
-                    qWarning()<<"keyReleaseEvent: m_navigationMode"<< m_navigationMode;
-                    qWarning()<<"keyReleaseEvent: m_navigationKeyCount"<< m_navigationKeyCount;
-                    qWarning()<<"keyReleaseEvent: key:"<< ke->text();
-                    qWarning()<<"Enable NavigationMode in Keyrelease";
-                }
-            }
-        }
-#endif
         break;
     }
     case QEvent::ShortcutOverride:
@@ -406,12 +381,6 @@ bool VTextEdit::eventFilter(QObject *p_obj, QEvent *p_event)
             setInputMethodEnabled(false);
             m_navigationMode = true;
             m_navigationKeyCount = 2; // key count without function key, extra 2 letters
-
-            qWarning()<<"ShortcutOverride: m_navigationMode"<< m_navigationMode;
-            qWarning()<<"ShortcutOverride: m_navigationKeyCount"<< m_navigationKeyCount;
-            qWarning()<<"ShortcutOverride: key:"<< ke->text();
-            qWarning()<<"Enable NavigationMode in ShortcutOverride";
-
             break;
         }
 
