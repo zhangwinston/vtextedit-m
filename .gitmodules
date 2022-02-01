@@ -1,9 +1,15 @@
 [submodule "src/libs/hunspell"]
 	path = src/libs/hunspell
 	url = https://github.com/vnotex/hunspell.git
+	branch = master
+	update = rebase
 [submodule "src/libs/sonnet"]
 	path = src/libs/sonnet
 	url = https://github.com/vnotex/sonnet.git
+	branch = master
+	update = rebase
 [submodule "src/libs/syntax-highlighting"]
 	path = src/libs/syntax-highlighting
 	url = https://github.com/zhangwinston/syntax-highlighting
+	branch = master
+	update = rebase
